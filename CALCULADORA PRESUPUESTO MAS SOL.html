@@ -1,0 +1,2696 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Calculadora Solar</title>
+  </head>
+
+  <body>
+    <div class="solar-calculator" id="solar-calculator">
+      <h2 id="sc-main-title">Descubre el precio de tu instalación de placas solares al instante</h2>
+
+
+      <p class="solar-calc-intro">
+        Completa este formulario y te mostramos tu presupuesto de placas solares orientativo en menos de 1 minuto.
+        <br />
+      </p>
+
+      <div id="sc-form-wrapper" class="sc-section">
+        <div id="sc-intro-screen" class="sc-intro-screen">
+          <div class="sc-intro-meta">
+            <span>Sin compromiso</span>
+            <span class="dot">·</span>
+            <span>Cálculo inmediato</span>
+            <span class="dot">·</span>
+            <span>Adaptado a tu consumo</span>
+            <span class="dot">·</span>
+            <span>Ajustable tras visita técnica</span>
+          </div>
+
+          <button type="button" class="sc-btn sc-intro-btn" onclick="scEmpezar()">
+            ¡Consigue tu presupuesto ahora
+          </button>
+        </div>
+
+        <div id="sc-steps-ui" style="display: none">
+          <div class="sc-steps-nav" id="sc-steps-nav">
+            <div class="sc-step-item">
+              <div class="sc-step-dot sc-step-dot-active" data-step="1">1</div>
+              <span>Tejado</span>
+            </div>
+
+            <div class="sc-step-line"></div>
+
+            <div class="sc-step-item">
+              <div class="sc-step-dot" data-step="2">2</div>
+              <span>Consumo</span>
+            </div>
+
+            <div class="sc-step-line"></div>
+
+            <div class="sc-step-item">
+              <div class="sc-step-dot" data-step="3">3</div>
+              <span>Extras</span>
+            </div>
+
+            <div class="sc-step-line"></div>
+
+            <div class="sc-step-item">
+              <div class="sc-step-dot" data-step="4">4</div>
+              <span>Datos</span>
+            </div>
+          </div>
+
+          <div class="solar-calc-fields-wrapper">
+            <!-- PASO 1 -->
+            <div class="sc-step" id="sc-step-1">
+              <h3>¿Qué superficie útil tienes para instalar placas?</h3>
+
+              <p class="sc-step-helper">
+                Cuenta solo la zona donde quepan paneles sin sombras (chimeneas, claraboyas, antenas, etc.).
+              </p>
+
+              <div class="solar-calc-field">
+                <div class="sc-field-inner">
+                  <label for="sc-m2">Metros cuadrados de tejado disponibles</label>
+                  <input type="number" id="sc-m2" min="5" step="1" placeholder="Ej: 60 m²" />
+                  <small>Si no lo sabes exacto, introduce una estimación aproximada.</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- PASO 2 -->
+            <div class="sc-step" id="sc-step-2" style="display: none">
+              <h3 id="sc-step2-title">Tu consumo y la financiación de los paneles solares</h3>
+
+              <p class="sc-step-helper" id="sc-step2-helper" style="display: none">
+              </p>
+
+              <div class="solar-calc-field">
+                <div class="sc-field-inner">
+                  <label for="sc-gasto" id="sc-gasto-label">
+                    ¿Cuál es tu gasto medio mensual en la factura de la luz? (€/mes)
+                  </label>
+                  <input type="number" id="sc-gasto" min="10" step="5" placeholder="Ej: 120 €" />
+                  <small>Usa el promedio de varios meses para una estimación más precisa.</small>
+                </div>
+              </div>
+
+              <!-- Ancla para colocar FINANCIACIÓN en modo solar -->
+              <div id="sc-finance-anchor-step2"></div>
+
+              <!-- FINANCIACIÓN (se moverá al paso 3 en modo extras) -->
+              <div id="sc-finance-block" class="sc-finance-block">
+                <h4 class="sc-finance-title">¿Quieres financiar tu batería?</h4>
+
+                <div class="solar-calc-field">
+                  <div class="sc-field-inner">
+                    <select id="sc-banco">
+                      <option value="ninguno">Sin financiación</option>
+                      <option value="bbva">BBVA</option>
+                      <option value="caixa">Caixa</option>
+                      <option value="fondosenergia">Fondos Energía</option>
+                    </select>
+                    <small>BBVA y Caixa: hasta 15 años. Fondos Energía: hasta 25 años.</small>
+                  </div>
+                </div>
+
+                <div class="solar-calc-field" id="sc-anos-field">
+                  <div class="sc-field-inner">
+                    <label for="sc-anos">¿En cuántos años quieres financiar?</label>
+                    <select id="sc-anos">
+                      <option value="8">8 años</option>
+                      <option value="10" selected>10 años</option>
+                      <option value="12">12 años</option>
+                      <option value="15">15 años</option>
+                      <option value="20">20 años</option>
+                      <option value="25">25 años</option>
+                    </select>
+                    <small>Calcularemos una cuota mensual orientativa en función del plazo.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PASO 3 -->
+            <div class="sc-step" id="sc-step-3" style="display: none">
+              <h3 class="sc-step-title" id="sc-step3-title">Personaliza tu instalación para ahorrar más</h3>
+
+              <p class="sc-step-helper" id="sc-step3-helper">
+                Elige batería y/o aerotermia para aumentar tu ahorro. Son opcionales.
+              </p>
+
+              <div class="sc-extras-groups">
+                <!-- Grupo Baterías -->
+                <section class="sc-extras-group" aria-labelledby="sc-bat-title">
+                  <div class="sc-extras-group-head">
+                    <h4 id="sc-bat-title" class="sc-extras-group-title">Baterías</h4>
+                  </div>
+
+                  <p class="sc-extras-group-desc" id="sc-bat-desc">Selecciona una batería para tu autoconsumo:</p>
+
+                  <div class="sc-extras-grid sc-extras-grid-2">
+                    <label class="sc-extra-card sc-extra-card-nice" for="sc-bat-ep5">
+                      <input type="checkbox" id="sc-bat-ep5" />
+                      <div class="sc-extra-content">
+                        <span class="sc-extra-title">Batería FOX EP 5</span>
+                        <span class="sc-extra-desc">
+                          ~5 kWh útiles. Almacena el excedente solar para usarlo por la noche.
+                        </span>
+                      </div>
+                    </label>
+
+                    <label class="sc-extra-card sc-extra-card-nice" for="sc-bat-ep11">
+                      <input type="checkbox" id="sc-bat-ep11" />
+                      <div class="sc-extra-content">
+                        <span class="sc-extra-title">Batería FOX EP 11</span>
+                        <span class="sc-extra-desc">
+                          ~10–11 kWh. Ideal para consumos altos o vehículo eléctrico.
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </section>
+
+                <!-- Grupo Aerotermia -->
+                <section class="sc-extras-group" aria-labelledby="sc-aero-title">
+                  <div class="sc-extras-group-head">
+                    <h4 id="sc-aero-title" class="sc-extras-group-title">Aerotermia</h4>
+                  </div>
+
+                  <p class="sc-extras-group-desc" id="sc-aero-desc">
+                    Puedes combinar aerotermia con cualquiera de las baterías.
+                  </p>
+
+                  <div class="sc-extras-grid sc-extras-grid-1">
+                    <label class="sc-extra-card sc-extra-card-nice" for="sc-aero-300">
+                      <input type="checkbox" id="sc-aero-300" />
+                      <div class="sc-extra-content">
+                        <span class="sc-extra-title">Aerotermia 300 L</span>
+                        <span class="sc-extra-desc">
+                          Agua caliente sanitaria muy eficiente aprovechando el aire y tus placas.
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </section>
+              </div>
+
+              <!-- Ancla para colocar FINANCIACIÓN en modo extras -->
+              <div id="sc-finance-anchor-step3"></div>
+            </div>
+
+            <!-- PASO 4 -->
+            <div class="sc-step" id="sc-step-4" style="display: none">
+              <h3 id="sc-step4-title">Tus datos de contacto</h3>
+
+              <p class="sc-step-helper" id="sc-step4-helper">
+                Déjanos tu teléfono y email para mostrarte el presupuesto orientativo y poder contactarte si lo deseas.
+              </p>
+
+              <div class="solar-calc-field">
+                <div class="sc-field-inner">
+                  <label for="sc-nombre">Nombre (opcional)</label>
+                  <input type="text" id="sc-nombre" placeholder="Tu nombre" />
+                </div>
+              </div>
+
+              <div class="solar-calc-field">
+                <div class="sc-field-inner">
+                  <label for="sc-telefono">Teléfono *</label>
+                  <input type="tel" id="sc-telefono" placeholder="Tu teléfono" autocomplete="tel" required />
+                  <small>Solo lo usaremos para hablar contigo sobre este presupuesto.</small>
+                </div>
+              </div>
+
+              <div class="solar-calc-field">
+                <div class="sc-field-inner">
+                  <label for="sc-email">Email *</label>
+                  <input type="email" id="sc-email" placeholder="Tu correo electrónico" autocomplete="email" required />
+                </div>
+              </div>  
+              <div class="sc-privacy">
+              <label class="sc-privacy-check" for="sc-privacy-check">
+                <input type="checkbox" id="sc-privacy-check" />
+                <span>
+                  He leído y acepto la
+                  <a href="https://www.massolenergia.com/politica-de-privacidad-web/" target="_blank" rel="noopener">Política de Privacidad</a>.
+                </span>
+              </label>
+            </div>
+            </div>
+          </div>
+
+          <!-- Error -->
+          <div id="sc-error" class="sc-error" style="display: none" aria-live="polite"></div>
+
+          <!-- Botones -->
+          <div class="sc-nav-buttons">
+            <button type="button" class="sc-btn sc-btn-secondary" onclick="scPasoAnterior()">Atrás</button>
+            <button type="button" id="sc-next-btn" class="sc-btn" onclick="scSiguientePaso()">Siguiente</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARGANDO -->
+      <div id="sc-loading" class="sc-loading sc-section" style="display: none">
+        <div class="sc-loading-dots">
+          <span class="sc-loading-dot"></span>
+          <span class="sc-loading-dot"></span>
+          <span class="sc-loading-dot"></span>
+        </div>
+        <p>Calculando tu presupuesto...</p>
+      </div>
+
+      <!-- RESULTADO -->
+      <div id="sc-resultado" class="solar-calc-resultado sc-section" style="display: none" aria-live="polite"></div>
+        </div>
+        <div id="sc-links-outside" class="sc-links-outside">
+          <a href="#" class="sc-intro-link" onclick="scEmpezarSoloExtras(event)">
+            Añade baterías o aerotermia a tu instalación y sácale el máximo partido
+          </a>
+
+        <a href="#" class="sc-intro-link sc-intro-link-alt" onclick="scEmpezarAmpliacion(event)">
+          ¿O quieres mejor una ampliación de tu instalación?
+        </a>
+      </div>
+
+
+      <style>
+/* =========================
+   RESET + VARIABLES
+========================= */
+#solar-calculator,
+#solar-calculator *{
+  box-sizing: border-box;
+}
+
+#solar-calculator.solar-calculator{
+  --sc-orange:#ff6600;
+  --sc-orange-soft:#ffedd5;
+  --sc-border-soft:#ffe0c2;
+  --sc-font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  width:100%;
+  max-width:1100px;
+  margin:80px auto 120px;
+  padding:50px 40px;
+  border-radius:32px;
+  background:radial-gradient(circle at top left,#fff7ed,#ffffff);
+  border:1px solid var(--sc-border-soft);
+  box-shadow:0 28px 70px rgba(0,0,0,.07);
+  font-family:var(--sc-font);
+  text-align:center;
+  position:relative; 
+}
+
+/* títulos */
+#solar-calculator h2{
+  margin:0 0 12px;
+  color:var(--sc-orange);
+  font-size:2.7rem;
+  font-weight:850;
+  letter-spacing:.01em;
+  line-height:1.12;
+}
+
+#solar-calculator .solar-calc-intro{
+  margin:0 0 18px;
+  color:#4b5563;
+  font-size:1.12rem;
+  line-height:1.55;
+}
+
+#solar-calculator .sc-section{ width:100%; }
+
+/* =========================
+   INTRO META
+========================= */
+#solar-calculator .sc-intro-meta{
+  max-width:980px;
+  margin:18px auto 22px; 
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  gap:10px 0;
+
+  line-height:1.25;
+  font-size:1.18rem;
+  font-weight:850;
+  color:#374151;
+}
+
+#solar-calculator .sc-intro-meta span{
+  background:none !important;
+  text-decoration:none !important;
+  box-shadow:none !important;
+  border:0 !important;
+  padding:0 !important;
+}
+
+#solar-calculator .sc-intro-meta .dot{
+  display:inline-block;
+  margin:0 18px;
+  color:#9ca3af;
+  opacity:.65;
+  font-weight:900;
+  line-height:1;
+}
+
+/* =========================
+   BOTONES
+========================= */
+#solar-calculator .sc-btn{
+  min-width:180px;
+  padding:12px 28px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  font-weight:800;
+  font-size:21px;
+  background:linear-gradient(90deg,var(--sc-orange),#ff8a33);
+  color:#fff;
+  box-shadow:none !important;
+  transition:transform .1s ease, opacity .1s ease;
+}
+
+#solar-calculator .sc-btn:hover{
+  transform:translateY(-2px);
+  opacity:.97;
+  box-shadow:none !important;
+}
+
+#solar-calculator .sc-btn:active{
+  transform:translateY(0);
+  opacity:.92;
+  box-shadow:none !important;
+}
+
+#solar-calculator .sc-btn-secondary{
+  background:#fff;
+  color:var(--sc-orange);
+  border:1px solid var(--sc-orange);
+  box-shadow:none !important;
+}
+
+#solar-calculator .sc-intro-btn{
+  width:min(520px,100%);
+  padding:20px 44px;
+  font-size:1.18rem;
+  border-radius:999px;
+
+  margin-top:10px;
+  margin-bottom:6px; 
+}
+
+
+/* Estilo base del contenedor */
+#sc-links-outside{
+  max-width:1100px;
+  margin:6px auto 0;      
+  padding:0 16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  text-align:center;
+  font-family:var(--sc-font);
+}
+
+#sc-links-outside.sc-hidden{
+  display: none !important;
+}
+
+#sc-links-outside .sc-intro-link,
+#sc-links-outside .sc-intro-link:link,
+#sc-links-outside .sc-intro-link:visited{
+  color:var(--sc-orange);
+  font-weight:850;
+  font-size:1.08rem;
+  line-height:1.25;
+
+  text-decoration:underline;
+  text-underline-offset:4px;
+  text-decoration-thickness:2px;
+
+  cursor:pointer;
+  margin:0;
+}
+
+#sc-links-outside .sc-intro-link:hover{
+  opacity:.9;
+}
+
+#sc-links-outside .sc-intro-link:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px rgba(255,102,0,.18);
+  border-radius:10px;
+}
+
+#sc-links-outside .sc-intro-link-alt{
+  opacity:.92;
+}
+
+#solar-calculator #sc-links-outside{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-62px;  
+  margin:0;
+}
+
+#solar-calculator .sc-steps-nav{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  margin-bottom:32px;
+}
+
+#solar-calculator .sc-step-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  font-size:.95rem;
+  color:#6b7280;
+  font-weight:650;
+}
+
+#solar-calculator .sc-step-dot{
+  width:38px;
+  height:38px;
+  border-radius:999px;
+  border:2px solid #fed7aa;
+  background:#fff7ed;
+  color:#9ca3af;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-weight:800;
+  font-size:1rem;
+}
+
+#solar-calculator .sc-step-dot-active{
+  border-color:var(--sc-orange);
+  background:linear-gradient(135deg,#ff7a1a,#ffb067);
+  color:#fff;
+  box-shadow:0 0 0 4px rgba(255,122,26,.18);
+}
+
+#solar-calculator .sc-step-line{
+  flex:0 0 60px;
+  height:2px;
+  border-radius:999px;
+  background:#fed7aa;
+}
+
+#solar-calculator .solar-calc-fields-wrapper{
+  width:100%;
+  max-width:780px;
+  margin:0 auto;
+  background:#fff;
+  border-radius:24px;
+  padding:26px 26px 10px;
+  box-shadow:0 18px 40px rgba(15,23,42,.06);
+  border:1px solid #ffe7cc;
+}
+
+#solar-calculator .sc-step h3{
+  margin:0 0 14px;
+  font-size:1.42rem;
+  color:#111827;
+  font-weight:850;
+}
+
+#solar-calculator .sc-step-helper{
+  margin:0 0 18px;
+  font-size:1.02rem;
+  color:#6b7280;
+  line-height:1.5;
+}
+
+#solar-calculator .solar-calc-field{
+  margin-bottom:22px;
+  text-align:center;
+}
+
+#solar-calculator .sc-field-inner{
+  max-width:620px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:stretch;
+  text-align:center;
+}
+
+#solar-calculator .solar-calc-field label{
+  font-weight:750;
+  color:#374151;
+  font-size:1.02rem;
+  width:100%;
+}
+
+#solar-calculator .solar-calc-field input,
+#solar-calculator .solar-calc-field select{
+  width:100%;
+  padding:13px 18px;
+  border-radius:999px;
+  border:1px solid var(--sc-border-soft);
+  background:#fff;
+  font-size:1rem;
+  transition:border-color .15s ease, box-shadow .15s ease, transform .05s ease;
+}
+
+#solar-calculator .solar-calc-field input:focus,
+#solar-calculator .solar-calc-field select:focus{
+  outline:none;
+  border-color:var(--sc-orange);
+  box-shadow:0 0 0 2px rgba(255,102,0,.18);
+  transform:translateY(-1px);
+}
+
+#solar-calculator .solar-calc-field small{
+  font-size:.92rem;
+  color:#6b7280;
+  width:100%;
+}
+
+#solar-calculator .solar-calc-field select{
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  padding-right:40px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='%23ff6600' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:calc(100% - 18px) 50%;
+  background-size:12px;
+}
+
+/* =========================
+   EXTRAS (Paso 3)
+========================= */
+#solar-calculator #sc-step-3{ text-align:center; }
+
+#solar-calculator #sc-step-3 .sc-step-title{
+  margin:0 0 10px;
+  font-size:1.65rem;
+  color:#111827;
+  font-weight:900;
+}
+
+#solar-calculator #sc-step-3 .sc-extras-groups{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  margin-top:6px;
+  align-items:center;
+}
+
+#solar-calculator #sc-step-3 .sc-extras-group{
+  width:100%;
+  max-width:760px;
+  margin:0 auto;
+  background:#fffaf4;
+  border:1px solid #ffe7cc;
+  border-radius:18px;
+  padding:16px;
+  text-align:center;
+}
+
+#solar-calculator #sc-step-3 .sc-extras-group-title{
+  margin:0;
+  font-size:1.12rem;
+  color:#111827;
+  font-weight:900;
+}
+
+#solar-calculator #sc-step-3 .sc-extras-group-desc{
+  margin:0 0 12px;
+  color:#6b7280;
+  font-size:.98rem;
+  line-height:1.5;
+}
+
+#solar-calculator #sc-step-3 .sc-extras-grid{
+  display:grid;
+  gap:14px;
+  justify-content:center;
+}
+
+#solar-calculator #sc-step-3 .sc-extras-grid-2{
+  grid-template-columns:repeat(2, minmax(260px, 320px));
+}
+#solar-calculator #sc-step-3 .sc-extras-grid-1{
+  grid-template-columns:minmax(260px, 320px);
+}
+
+#solar-calculator .sc-extra-card{
+  max-width:320px;
+  padding:14px 16px;
+  border-radius:18px;
+  border:1px solid #ffe1c1;
+  background:#fff;
+
+  display:flex;
+  gap:10px;
+  cursor:pointer;
+
+  transition:box-shadow .15s ease, transform .1s ease, border-color .15s ease, background .15s ease;
+  align-items:flex-start;
+}
+
+#solar-calculator .sc-extra-card:hover{
+  box-shadow:0 14px 30px rgba(0,0,0,.06);
+  transform:translateY(-2px);
+  border-color:var(--sc-orange-soft);
+  background:#fff7ed;
+}
+
+#solar-calculator .sc-extra-card input{
+  margin-top:3px;
+  accent-color:var(--sc-orange);
+}
+
+#solar-calculator .sc-extra-content{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  text-align:left;
+}
+
+#solar-calculator .sc-extra-title{
+  font-weight:800;
+  font-size:1.02rem;
+  color:#111827;
+}
+#solar-calculator .sc-extra-desc{
+  font-size:.92rem;
+  color:#6b7280;
+  line-height:1.4;
+}
+
+#solar-calculator .sc-extra-selected{
+  border-color:var(--sc-orange);
+  box-shadow:0 10px 26px rgba(255,102,0,.14);
+  background:#fff7ed;
+}
+
+/* =========================
+   NAV BUTTONS (pasos)
+========================= */
+#solar-calculator .sc-nav-buttons{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  margin-top:26px;
+}
+
+/* =========================
+   ERROR
+========================= */
+#solar-calculator .sc-error{
+  margin-top:18px;
+  padding:11px 13px;
+  border-radius:12px;
+  background:#fef3c7;
+  border:1px solid #facc15;
+  color:#92400e;
+  font-size:.95rem;
+  font-weight:700;
+}
+
+/* =========================
+   LOADING
+========================= */
+#solar-calculator .sc-loading{ padding:60px 10px; }
+#solar-calculator .sc-loading p{
+  margin:0;
+  color:#4b5563;
+  font-size:1.1rem;
+  font-weight:650;
+}
+#solar-calculator .sc-loading-dots{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:14px;
+}
+#solar-calculator .sc-loading-dot{
+  width:13px;height:13px;border-radius:999px;
+  background:var(--sc-orange);
+  animation:sc-bounce 1s infinite alternate;
+}
+#solar-calculator .sc-loading-dot:nth-child(2){ animation-delay:.15s; }
+#solar-calculator .sc-loading-dot:nth-child(3){ animation-delay:.3s; }
+
+@keyframes sc-bounce{
+  from{ transform:translateY(0); opacity:.6; }
+  to{ transform:translateY(-8px); opacity:1; }
+}
+
+/* =========================
+   RESULTADO
+========================= */
+#solar-calculator .solar-calc-resultado{
+  margin-top:30px;
+  padding:30px 26px;
+  border-radius:26px;
+  background:#fff;
+  border:1px solid var(--sc-border-soft);
+  font-size:1.03rem;
+  text-align:left;
+  box-shadow:0 22px 55px rgba(0,0,0,.05);
+}
+
+#solar-calculator .sc-res-title{
+  margin:0 0 8px;
+  font-size:1.95rem;
+  font-weight:900;
+  color:var(--sc-orange);
+  text-align:center;
+}
+
+#solar-calculator .sc-res-subtitle{
+  margin:0 0 22px;
+  font-size:1rem;
+  color:#6b7280;
+  text-align:center;
+}
+
+#solar-calculator .sc-res-highlight{
+  margin-bottom:22px;
+  padding:18px 20px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#fff3e0,#ffe1bf);
+  border:1px solid var(--sc-border-soft);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+#solar-calculator .sc-res-highlight-label{
+  font-size:.98rem;
+  color:#6b7280;
+  text-align:center !important;
+}
+
+#solar-calculator .sc-res-highlight-main{
+  font-size:2.25rem;
+  font-weight:950;
+  color:var(--sc-orange);
+  text-align:center;
+}
+
+#solar-calculator .sc-res-highlight-sub{
+  font-size:.98rem;
+  color:#4b5563;
+  text-align:center;
+}
+
+#solar-calculator .sc-res-highlight-chips{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:10px;
+  width:100%;
+}
+
+#solar-calculator .sc-chip{
+  padding:10px 14px;
+  border-radius:14px;
+  background:#fff;
+  border:1px solid #ffd7b0;
+  font-size:.96rem;
+  color:#374151;
+  font-weight:650;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  text-align:left;
+}
+#solar-calculator .sc-chip .label{
+  font-size:.84rem;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  opacity:.7;
+  font-weight:800;
+}
+#solar-calculator .sc-chip .value{
+  font-weight:900;
+  color:#111827;
+}
+
+#solar-calculator .sc-res-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);
+  gap:22px;
+  align-items:flex-start;
+}
+#solar-calculator .sc-res-block{
+  background:#fff;
+  border-radius:18px;
+  padding:18px 20px;
+  border:1px solid var(--sc-border-soft);
+}
+#solar-calculator .sc-res-price{
+  text-align:center;
+  background:radial-gradient(circle at top,#fff7ed,#ffffff);
+}
+
+#solar-calculator .sc-res-price-label{
+  font-size:.96rem;
+  color:#6b7280;
+  margin:8px 0 6px;
+}
+#solar-calculator .sc-res-price-value{
+  margin:0 0 8px;
+  font-size:2.35rem;
+  font-weight:950;
+  color:var(--sc-orange);
+  line-height:1.08;
+}
+
+#solar-calculator .sc-res-price-note{
+  font-size:.9rem;
+  color:#6b7280;
+  margin:0 0 5.5px !important;
+}
+#solar-calculator .sc-res-price p{
+  margin:0 0 5.5px !important;
+}
+
+#solar-calculator .sc-res-price-detail{
+  margin-top:12px;
+  text-align:left;
+}
+#solar-calculator .sc-res-price-detail h4{
+  margin:0 0 6px;
+  font-size:1rem;
+  color:#111827;
+  font-weight:900;
+}
+
+/* extras list */
+#solar-calculator .sc-res-list{
+  list-style:none;
+  margin:8px 0 0;
+  padding:0;
+}
+#solar-calculator .sc-res-list li{
+  position:relative;
+  padding-left:18px;
+  margin:8px 0;
+}
+#solar-calculator .sc-res-list li::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.62em;
+  width:7px;height:7px;
+  border-radius:999px;
+  background:var(--sc-orange);
+  box-shadow:0 0 0 3px rgba(255,102,0,.12);
+}
+
+#solar-calculator .sc-steps-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:10px;
+}
+#solar-calculator .sc-steps-list li{
+  position:relative;
+  padding-left:24px;
+  color:#374151;
+  line-height:1.55;
+  font-size:.95rem;
+}
+#solar-calculator .sc-steps-list li::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.62em;
+  width:8px;height:8px;
+  border-radius:999px;
+  background:var(--sc-orange);
+  box-shadow:0 0 0 3px rgba(255,102,0,.14);
+}
+#solar-calculator .sc-steps-list strong{
+  color:#111827;
+  font-weight:800;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (min-width:900px){
+  #solar-calculator .sc-intro-meta{ flex-wrap:nowrap; }
+}
+
+@media (max-width:900px){
+  #solar-calculator .sc-res-highlight-chips{ grid-template-columns:1fr; }
+}
+
+@media (max-width:768px){
+  #solar-calculator.solar-calculator{
+    margin:40px auto 100px;
+    padding:30px 16px;
+  }
+
+  #solar-calculator h2{ font-size:2.1rem; }
+  #solar-calculator .solar-calc-intro{ font-size:1.05rem; }
+
+  #solar-calculator .solar-calc-fields-wrapper{
+    max-width:100%;
+    padding:20px 16px 10px;
+  }
+  #solar-calculator .sc-field-inner{ max-width:100%; }
+
+  #solar-calculator .sc-res-grid{ grid-template-columns:1fr; }
+
+  #solar-calculator .sc-nav-buttons{ flex-direction:column-reverse; }
+  #solar-calculator .sc-btn{ width:100%; min-width:0; }
+
+  #solar-calculator #sc-step-3 .sc-extras-grid-2,
+  #solar-calculator #sc-step-3 .sc-extras-grid-1{
+    grid-template-columns:1fr;
+  }
+
+  #solar-calculator .sc-steps-nav{ gap:10px; margin-bottom:18px; }
+  #solar-calculator .sc-step-item{ gap:4px; font-size:.85rem; }
+  #solar-calculator .sc-step-dot{ width:30px; height:30px; font-size:.9rem; }
+  #solar-calculator .sc-step-line{ flex:0 0 36px; }
+  #solar-calculator .sc-step-item span{ font-size:.82rem; line-height:1.1; }
+
+  #solar-calculator #sc-links-outside{ bottom:-58px; }
+}
+
+@media (max-width:520px){
+  #solar-calculator .sc-intro-meta{
+    flex-direction:column;
+    gap:10px;
+    padding:0 10px;
+    font-size:1.05rem;
+    margin:14px auto 16px;
+  }
+  #solar-calculator .sc-intro-meta .dot{ display:none !important; }
+
+  #solar-calculator .sc-steps-nav{ gap:8px; }
+  #solar-calculator .sc-step-dot{ width:28px; height:28px; font-size:.85rem; }
+  #solar-calculator .sc-step-line{ flex:0 0 26px; }
+  #solar-calculator .sc-step-item span{ font-size:.78rem; }
+
+  #solar-calculator .solar-calc-resultado{
+    padding:18px 14px;
+    border-radius:22px;
+  }
+  #solar-calculator .sc-res-title{ font-size:1.55rem; margin-bottom:6px; }
+  #solar-calculator .sc-res-subtitle{ margin-bottom:14px; }
+
+  #solar-calculator .sc-res-highlight{
+    padding:14px;
+    border-radius:18px;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  #solar-calculator .sc-res-highlight-main{
+    font-size:clamp(2rem,10vw,2.6rem);
+    margin:6px 0 8px;
+    line-height:1.05;
+  }
+
+  /* apretamos la parte “Inversión orientativa…” */
+  #solar-calculator .sc-res-highlight-label,
+  #solar-calculator .sc-res-price-label{
+    margin:0 0 4px !important;
+    line-height:1.15 !important;
+  }
+  #solar-calculator .sc-res-highlight-sub{
+    margin:0 !important;
+  }
+
+  #solar-calculator #sc-links-outside{
+    bottom:-56px;
+    gap:8px;
+  }
+  #sc-links-outside .sc-intro-link{ font-size:1.02rem; }
+}
+
+@media (max-width:360px){
+  #solar-calculator .sc-step-item span{ display:none; }
+  #solar-calculator .sc-step-line{ flex:0 0 22px; }
+}
+
+#sc-links-outside.sc-links-outside{
+  margin-top: -100px !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  text-align:center;
+}
+
+#sc-links-outside.sc-links-outside a.sc-intro-link,
+#sc-links-outside.sc-links-outside a.sc-intro-link:link,
+#sc-links-outside.sc-links-outside a.sc-intro-link:visited{
+  font-family: inherit !important;
+  font-size: 1.08rem !important;
+  font-weight: 850 !important;
+
+  color: #ff6600 !important;
+
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+
+  cursor: pointer;
+}
+
+#sc-links-outside.sc-links-outside a.sc-intro-link:hover{
+  opacity: .9;
+}
+
+@media (max-width:520px){
+  #sc-links-outside.sc-links-outside{
+    margin-top: -10px !important;
+    gap: 10px;
+  }
+  #sc-links-outside.sc-links-outside a.sc-intro-link{
+    font-size: 1.02rem !important;
+  }
+}
+
+#solar-calculator h4.sc-finance-title{
+  margin: 14px 0 12px !important;
+  padding: 0 !important;
+
+  font-family: inherit !important;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
+  line-height: 1.25 !important;
+
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+
+  color: #111827 !important;
+  text-align: center !important;
+}
+
+.sc-res-grid{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.sc-res-block{
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px){
+  .sc-res-grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+.sc-res-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(280px,420px);
+  gap:18px;
+  align-items:stretch;
+}
+@media (max-width:900px){
+  .sc-res-grid{ grid-template-columns:1fr; }
+}
+
+.sc-btn-container {
+        text-align: center;
+        margin-top: 10px; 
+        position: relative;
+    }
+
+    #sc-nuevo-estudio-btn {
+        margin-top: 10px;  
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 5px;
+        background-color: #FF6A00; 
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: auto; 
+    }
+
+    @media (max-width: 768px) {
+        .sc-btn-container {
+            margin-top: 20px; 
+        }
+
+        #sc-nuevo-estudio-btn {
+          margin: 20px;
+            font-size: 14px; 
+            padding: 10px 20px;
+        }
+    }
+
+#sc-back-btn {
+  padding: 12px 28px;
+  font-size: 18px;
+  font-weight: 800;
+  background: #fff;
+  color: #ff6600;
+  border-radius: 999px;
+  border: 2px solid #ff6600;
+  cursor: pointer;
+  text-align: center;
+  width: auto;
+  margin-left: 10px;
+}
+
+#sc-back-btn:hover {
+  opacity: 0.9;
+}
+
+#sc-back-btn:active {
+  opacity: 0.8;
+}
+
+#sc-nuevo-estudio-btn {
+  margin-top: 10px;
+  width: auto; 
+  padding: 10px 20px; 
+  display: inline-block; 
+  box-sizing: border-box; 
+}
+
+@media (max-width: 1024px) {
+  #sc-nuevo-estudio-btn {
+    width: 100%; 
+    margin-top: 50px; 
+  }
+}
+
+
+@media (max-width: 769px) {
+  #sc-nuevo-estudio-btn {
+    width: 100%; 
+    margin-top: 100px; 
+    padding: 12px; 
+  }
+}
+
+
+@media (max-width: 450px) {
+  #sc-nuevo-estudio-btn {
+    width: 100%;
+    margin-top: 110px; 
+    padding: 14px; 
+  }
+}
+
+#sc-nuevo-estudio-btn,
+#sc-nuevo-estudio-btn-mobile {
+        padding: 8px 16px;
+        margin-top: 10px;  
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 5px;
+        background-color: #FF6A00; 
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: auto; 
+}
+
+
+@media (max-width: 768px) {
+  #sc-nuevo-estudio-btn-mobile {
+    margin-top: 100px;
+  }
+}
+
+
+/* =========================
+   FIX TABLET (768–1024)
+   Paso 3 - Extras
+   ========================= */
+@media (max-width: 767px){
+  #sc-step-3 .sc-extras-group,
+  #sc-step-3 .sc-extras-grid{
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  #sc-step-3 .sc-extras-grid-2{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  #sc-step-3 .sc-extras-grid-1{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  #sc-step-3 .sc-extra-card{
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box;
+  }
+
+  #sc-step-3 .sc-extra-content{
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 767px){
+  #sc-step-3 .sc-extras-grid-2{
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.sc-privacy{ margin-top: 12px; }
+
+.sc-privacy-check{
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.sc-privacy-check input{ margin-top: 2px; }
+
+.sc-error{
+  margin-top: 6px;
+  font-size: 12px;
+  color: #c40000;
+}
+
+.sc-btn[disabled]{
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Contenedor privacidad */
+.sc-privacy{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 14px 0 6px;
+}
+
+.sc-privacy-check{
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 6px 0;          
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  cursor: pointer;
+  line-height: 1.35;
+  font-size: 14px;
+  user-select: none;
+}
+
+/* checkbox */
+.sc-privacy-check input[type="checkbox"]{
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  accent-color: #ff7a00;
+  cursor: pointer;
+}
+
+.sc-privacy-check input[type="checkbox"]:focus{
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* texto/enlace */
+.sc-privacy-check span{
+  color: #222;
+}
+
+.sc-privacy-check a{
+  color: #ff6600;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sc-privacy-check a:hover{
+  opacity: .9;
+}
+
+#sc-privacy-error{
+  display: none;
+  max-width: 720px;
+  margin: 8px auto 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(220, 53, 69, .08);
+  border: 0;              
+  color: #b02a37;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+@media (max-width: 520px){
+  .sc-privacy-check{
+    font-size: 13.5px;
+    gap: 10px;
+  }
+}
+
+</style>
+
+<script>
+(function () {
+  // ==========================
+  // CONFIG
+  // ==========================
+  const SC_CONFIG = {
+    precioKwh: 0.25,
+    kwhPorKwpAlAno: 1500,
+    m2PorPanel: 2.4,
+    kwpPorPanel: 0.64,
+    packs: [
+      { id: "pack-3", nombre: "Pack 3,0 kW (3,2 kWp)", potenciaKwp: 3.2, paneles: 5, precio: 8476, inversor: "Inversor FOX 5 kW" },
+      { id: "pack-3_8", nombre: "Pack 3,8 kW (3,84 kWp)", potenciaKwp: 3.84, paneles: 6, precio: 8938, inversor: "Inversor FOX 5 kW" },
+      { id: "pack-4_5", nombre: "Pack 4,5 kW (4,48 kWp)", potenciaKwp: 4.48, paneles: 7, precio: 9620, inversor: "Inversor FOX 5 kW" },
+      { id: "pack-5_1", nombre: "Pack 5,1 kW (5,12 kWp)", potenciaKwp: 5.12, paneles: 8, precio: 9955, inversor: "Inversor FOX 5 kW" },
+      { id: "pack-6_4", nombre: "Pack 6,4 kW (6,4 kWp)", potenciaKwp: 6.4, paneles: 10, precio: 10895, inversor: "Inversor FOX 8 kW" },
+      { id: "pack-7_6", nombre: "Pack 7,6 kW (7,68 kWp)", potenciaKwp: 7.68, paneles: 12, precio: 11800, inversor: "Inversor FOX 8 kW" },
+      { id: "pack-8_9", nombre: "Pack 8,9 kW (8,96 kWp)", potenciaKwp: 8.96, paneles: 14, precio: 12701, inversor: "Inversor FOX 10 kW" },
+      { id: "pack-10_2", nombre: "Pack 10,2 kW (10,24 kWp)", potenciaKwp: 10.24, paneles: 16, precio: 13173, inversor: "Inversor FOX 10 kW" }
+    ],
+    baterias: {
+      ep5: { nombre: "Batería FOX EP 5", precio: 7200 },
+      ep11: { nombre: "Batería FOX EP 11", precio: 8640 }
+    },
+    aerotermia: {
+      "300L": { nombre: "Aerotermia 300 L", precio: 4100 }
+    },
+    descuentosBateria: { bbva: 1000, caixa: 1200 },
+    financiacion: { interesAnual: 0.05, margenSeguridad: 1.1 }
+  };
+
+  const SC_BANK_LABELS = {
+    ninguno: "Sin financiación",
+    bbva: "BBVA",
+    caixa: "Caixa",
+    fondosenergia: "Fondos Energía"
+  };
+
+  const SC_FINANCE_YEARS = {
+    bbva: [8, 10, 12, 15],
+    caixa: [8, 10, 12, 15],
+    fondosenergia: [8, 10, 12, 15, 20, 25]
+  };
+
+  let scModo = "solar";
+  let scPasoActual = 1;
+
+  let scStep2TitleOriginal = null;
+  let scGastoLabelOriginal = null;
+  let scStep3TitleOriginal = null;
+  let scStep3HelperOriginal = null;
+  let scBatDescOriginal = null;
+  let scAeroDescOriginal = null;
+  let scStep4HelperOriginal = null;
+  let scMainTitleOriginal = null;
+
+
+  let __scNavLockUntil = 0;
+  function scLockNav(ms = 250) {
+    const now = Date.now();
+    if (now < __scNavLockUntil) return false;
+    __scNavLockUntil = now + ms;
+    return true;
+  }
+
+  function scSetDisplay(el, value) {
+    if (!el) return;
+    el.style.setProperty("display", value, "important");
+  }
+
+  function scAsegurarResultadoDentroDelCubiculo() {
+    const root = document.getElementById("solar-calculator");
+    if (!root) return;
+    const loadingDiv = document.getElementById("sc-loading");
+    const resultadoDiv = document.getElementById("sc-resultado");
+    [loadingDiv, resultadoDiv].forEach((el) => {
+      if (el && !root.contains(el)) root.appendChild(el);
+    });
+  }
+
+  function scOcultarFormulario() {
+    const formWrapper = document.getElementById("sc-form-wrapper");
+    const stepsUI = document.getElementById("sc-steps-ui");
+    const intro = document.getElementById("sc-intro-screen");
+    scSetDisplay(intro, "none");
+    scSetDisplay(stepsUI, "none");
+    scSetDisplay(formWrapper, "none");
+  }
+
+  function scTotalPasos() {
+    if (scModo === "extras") return 3;
+    if (scModo === "ampliacion") return 1;
+    return 4;
+  }
+
+  function scPasoReal(pasoVisible) {
+    if (scModo === "extras") return [2, 3, 4][pasoVisible - 1];
+    if (scModo === "ampliacion") return 4;
+    return pasoVisible;
+  }
+
+  function scConfigurarNav() {
+    const nav = document.getElementById("sc-steps-nav");
+    const items = document.querySelectorAll(".sc-steps-nav .sc-step-item");
+    const lines = document.querySelectorAll(".sc-steps-nav .sc-step-line");
+
+    if (scModo === "ampliacion") {
+      if (nav) scSetDisplay(nav, "none");
+      return;
+    } else {
+      if (nav) scSetDisplay(nav, "flex");
+    }
+
+    items.forEach((i) => scSetDisplay(i, "flex"));
+    lines.forEach((l) => scSetDisplay(l, "block"));
+
+    if (scModo === "solar") {
+      items.forEach((item, idx) => {
+        const dot = item.querySelector(".sc-step-dot");
+        if (!dot) return;
+        dot.textContent = String(idx + 1);
+        dot.setAttribute("data-flow", String(idx + 1));
+      });
+      return;
+    }
+
+    if (items[0]) scSetDisplay(items[0], "none");
+    if (lines[0]) scSetDisplay(lines[0], "none");
+
+    const visibles = [items[1], items[2], items[3]].filter(Boolean);
+    visibles.forEach((item, idx) => {
+      const dot = item.querySelector(".sc-step-dot");
+      if (!dot) return;
+      dot.textContent = String(idx + 1);
+      dot.setAttribute("data-flow", String(idx + 1));
+    });
+
+    if (lines[1]) scSetDisplay(lines[1], "block");
+    if (lines[2]) scSetDisplay(lines[2], "block");
+  }
+
+  function scReubicarFinanciacion() {
+    const block = document.getElementById("sc-finance-block");
+    const a2 = document.getElementById("sc-finance-anchor-step2");
+    const a3 = document.getElementById("sc-finance-anchor-step3");
+    if (!block || !a2 || !a3) return;
+
+    const targetAnchor = scModo === "extras" ? a3 : a2;
+    if (!targetAnchor.parentNode) return;
+    targetAnchor.parentNode.insertBefore(block, targetAnchor.nextSibling);
+  }
+
+  function scActualizarTextosModo() {
+    const step2Title = document.getElementById("sc-step2-title");
+    const gastoLabel = document.getElementById("sc-gasto-label");
+    const mainTitle = document.getElementById("sc-main-title");
+    if (scMainTitleOriginal === null && mainTitle) scMainTitleOriginal = mainTitle.textContent;
+
+    if (scStep2TitleOriginal === null && step2Title) scStep2TitleOriginal = step2Title.textContent;
+    if (scGastoLabelOriginal === null && gastoLabel) scGastoLabelOriginal = gastoLabel.textContent;
+
+    const step3Title = document.getElementById("sc-step3-title");
+    const step3Helper = document.getElementById("sc-step3-helper");
+    const batDesc = document.getElementById("sc-bat-desc");
+    const aeroDesc = document.getElementById("sc-aero-desc");
+
+    if (scStep3TitleOriginal === null && step3Title) scStep3TitleOriginal = step3Title.textContent;
+    if (scStep3HelperOriginal === null && step3Helper) scStep3HelperOriginal = step3Helper.textContent;
+    if (scBatDescOriginal === null && batDesc) scBatDescOriginal = batDesc.textContent;
+    if (scAeroDescOriginal === null && aeroDesc) scAeroDescOriginal = aeroDesc.textContent;
+
+    const step4Helper = document.getElementById("sc-step4-helper");
+    if (scStep4HelperOriginal === null && step4Helper) scStep4HelperOriginal = step4Helper.textContent;
+
+    if (scModo === "extras") {
+      if (step2Title) step2Title.textContent = "Tu consumo";
+      if (gastoLabel) gastoLabel.textContent = "¿Cuál es tu consumo medio mensual de luz? (€/mes)";
+      if (step3Title) step3Title.textContent = "Elige tus baterías o aerotermia";
+      if (step3Helper) step3Helper.textContent = "Selecciona la batería que quieres instalar. Si quieres, añade aerotermia para ACS.";
+      if (batDesc) batDesc.textContent = "Selecciona la batería que quieres instalar.";
+      if (aeroDesc) aeroDesc.textContent = "¿Te interesa aerotermia para agua caliente sanitaria (ACS)? Añádela al cálculo.";
+      if (step4Helper) step4Helper.textContent = "Déjanos tus datos para mostrarte el presupuesto.";
+      return;
+    }
+
+    if (scModo === "ampliacion") {
+      if (step4Helper) {
+        step4Helper.textContent =
+          "Completa este formulario y consigue un presupuesto orientativo para la ampliación de tu instalación de paneles solares.";
+      }
+      if (mainTitle) mainTitle.textContent = "Descubre el precio de ampliar tu instalación fotovoltaica";
+      return;
+    }
+
+    if (step2Title && scStep2TitleOriginal) step2Title.textContent = scStep2TitleOriginal;
+    if (gastoLabel && scGastoLabelOriginal) gastoLabel.textContent = scGastoLabelOriginal;
+    if (step3Title && scStep3TitleOriginal) step3Title.textContent = scStep3TitleOriginal;
+    if (step3Helper && scStep3HelperOriginal) step3Helper.textContent = scStep3HelperOriginal;
+    if (batDesc && scBatDescOriginal) batDesc.textContent = scBatDescOriginal;
+    if (aeroDesc && scAeroDescOriginal) aeroDesc.textContent = scAeroDescOriginal;
+    if (step4Helper && scStep4HelperOriginal) step4Helper.textContent = scStep4HelperOriginal;
+    if (mainTitle && scMainTitleOriginal) mainTitle.textContent = scMainTitleOriginal;
+  }
+
+  function scMostrarUI() {
+    const intro = document.getElementById("sc-intro-screen");
+    const steps = document.getElementById("sc-steps-ui");
+    scSetDisplay(intro, "none");
+    scSetDisplay(steps, "block");
+  }
+
+  // ==========================
+  // Start modes
+  // ==========================
+  function scOcultarLinksOutside() {
+    const el = document.getElementById("sc-links-outside");
+    if (!el) return;
+    el.classList.add("sc-hidden");
+  }
+
+  function scMostrarLinksOutside() {
+    const el = document.getElementById("sc-links-outside");
+    if (!el) return;
+    el.classList.remove("sc-hidden");
+  }
+
+  function scEmpezar(e) {
+    if (e && e.preventDefault) { e.preventDefault(); e.stopPropagation(); }
+    if (!scLockNav()) return false;
+
+    scOcultarLinksOutside();
+    scAsegurarResultadoDentroDelCubiculo();
+    scModo = "solar";
+    document.getElementById("solar-calculator")?.classList.remove("sc-mode-extras");
+    scConfigurarNav();
+    scActualizarTextosModo();
+    scReubicarFinanciacion();
+    scMostrarUI();
+    mostrarPaso(1);
+    actualizarVisibilidadFinanciacion();
+    setTimeout(() => document.getElementById("sc-m2")?.focus(), 150);
+    document.getElementById("solar-calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    return false;
+  }
+
+  function scEmpezarSoloExtras(e) {
+    if (e && e.preventDefault) { e.preventDefault(); e.stopPropagation(); }
+    if (!scLockNav()) return false;
+
+    scOcultarLinksOutside();
+    scAsegurarResultadoDentroDelCubiculo();
+    scModo = "extras";
+    document.getElementById("solar-calculator")?.classList.add("sc-mode-extras");
+    scConfigurarNav();
+    scActualizarTextosModo();
+    scReubicarFinanciacion();
+    scMostrarUI();
+    mostrarPaso(1);
+    actualizarVisibilidadFinanciacion();
+    setTimeout(() => document.getElementById("sc-gasto")?.focus(), 150);
+    document.getElementById("solar-calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    return false;
+  }
+
+  function scEmpezarAmpliacion(e) {
+    if (e && e.preventDefault) { e.preventDefault(); e.stopPropagation(); }
+    if (!scLockNav()) return false;
+
+    scOcultarLinksOutside();
+    scAsegurarResultadoDentroDelCubiculo();
+    scModo = "ampliacion";
+    document.getElementById("solar-calculator")?.classList.remove("sc-mode-extras");
+    scConfigurarNav();
+    scActualizarTextosModo();
+    scReubicarFinanciacion();
+    scMostrarUI();
+    mostrarPaso(1);
+    actualizarVisibilidadFinanciacion();
+    setTimeout(() => document.getElementById("sc-telefono")?.focus(), 150);
+    document.getElementById("solar-calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    return false;
+  }
+
+  // ==========================
+  // Navigation steps
+  // ==========================
+  function mostrarPaso(pasoVisible) {
+    scPasoActual = pasoVisible;
+
+    document.querySelectorAll(".sc-step").forEach((step) => scSetDisplay(step, "none"));
+
+    const real = scPasoReal(pasoVisible);
+    const el = document.getElementById("sc-step-" + real);
+    if (el) scSetDisplay(el, "block");
+
+    document.querySelectorAll(".sc-step-dot").forEach((dot) => {
+      const flow = parseInt(dot.getAttribute("data-flow") || dot.getAttribute("data-step") || "0", 10);
+      dot.classList.toggle("sc-step-dot-active", flow === pasoVisible);
+    });
+
+    const nextBtn = document.getElementById("sc-next-btn");
+    if (nextBtn) {
+      if (scModo === "ampliacion") nextBtn.textContent = "Enviar";
+      else nextBtn.textContent = pasoVisible === scTotalPasos() ? "Ver mi presupuesto" : "Siguiente";
+      if (nextBtn.dataset.baseText) delete nextBtn.dataset.baseText;
+    }
+
+    scSetDisplay(document.getElementById("sc-error"), "none");
+    scUpdateNextBtnText();
+  }
+
+  function scVolverAIntro(e) {
+    if (e && e.preventDefault) { e.preventDefault(); e.stopPropagation(); }
+
+    scAsegurarResultadoDentroDelCubiculo();
+
+    const intro = document.getElementById("sc-intro-screen");
+    const steps = document.getElementById("sc-steps-ui");
+    const formWrapper = document.getElementById("sc-form-wrapper");
+    const loadingDiv = document.getElementById("sc-loading");
+    const resultadoDiv = document.getElementById("sc-resultado");
+    const errorDiv = document.getElementById("sc-error");
+
+    scMostrarLinksOutside();
+
+    scSetDisplay(loadingDiv, "none");
+    scSetDisplay(resultadoDiv, "none");
+    scSetDisplay(errorDiv, "none");
+
+    scSetDisplay(formWrapper, "block");
+    scSetDisplay(steps, "none");
+    scSetDisplay(intro, "block");
+
+    document.getElementById("solar-calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return false;
+  }
+
+  function scPasoAnterior(e) {
+    if (e && e.preventDefault) { e.preventDefault(); e.stopPropagation(); }
+    if (!scLockNav()) return false;
+
+    if (scPasoActual <= 1) {
+      scVolverAIntro(e);
+      return false;
+    }
+    mostrarPaso(scPasoActual - 1);
+    return false;
+  }
+
+  // ==========================
+  // Validations
+  // ==========================
+  function scValidarEmail(email) {
+    const v = String(email || "").trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(v);
+  }
+
+  function scNormalizarTelefonoES(tel) {
+    let t = String(tel || "").trim().replace(/[^\d+]/g, "");
+    if (t.startsWith("0034")) t = "+34" + t.slice(4);
+    if (t.startsWith("+34")) t = t.slice(3);
+    if (/^34\d{9}$/.test(t)) t = t.slice(2);
+    return t;
+  }
+
+  function scValidarTelefonoES(tel) {
+    const t = scNormalizarTelefonoES(tel);
+    return /^\d{9}$/.test(t) && /^[6789]\d{8}$/.test(t);
+  }
+
+  function scMostrarError(msg) {
+    const errorDiv = document.getElementById("sc-error");
+    if (!errorDiv) return;
+    errorDiv.textContent = msg;
+    scSetDisplay(errorDiv, "block");
+  }
+
+  // ==========================
+  // Finance helpers
+  // ==========================
+  function calcularCuotaMensual(monto, anos, interesAnual, margenSeguridad) {
+    const n = anos * 12;
+    const r = interesAnual / 12;
+    if (interesAnual > 0) {
+      const factor = Math.pow(1 + r, n);
+      const cuotaBase = (monto * (r * factor)) / (factor - 1);
+      return cuotaBase * margenSeguridad;
+    }
+    return (monto / n) * margenSeguridad;
+  }
+
+  function formatearEuros(valor) {
+    return Number(valor).toLocaleString("es-ES", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0
+    });
+  }
+
+  function actualizarOpcionesAnios() {
+    const bancoValor = document.getElementById("sc-banco")?.value;
+    const anosSelect = document.getElementById("sc-anos");
+    if (!anosSelect) return;
+
+    const allowed = SC_FINANCE_YEARS[bancoValor] || [8, 10, 12, 15];
+    const valorActual = parseInt(anosSelect.value, 10);
+
+    anosSelect.innerHTML = allowed.map((y) => `<option value="${y}">${y} años</option>`).join("");
+
+    const nuevoValor = allowed.includes(valorActual) ? valorActual : (allowed.includes(10) ? 10 : allowed[0]);
+    anosSelect.value = String(nuevoValor);
+  }
+
+  function actualizarVisibilidadFinanciacion() {
+    const bancoValor = document.getElementById("sc-banco")?.value;
+    const anosField = document.getElementById("sc-anos-field");
+    if (!anosField) return;
+
+    if (bancoValor === "ninguno") {
+      scSetDisplay(anosField, "none");
+      return;
+    }
+    scSetDisplay(anosField, "block");
+    actualizarOpcionesAnios();
+  }
+
+  // ==========================
+  // Extras UI selection
+  // ==========================
+  function scConfigurarBateriasExclusivas() {
+    const ep5 = document.getElementById("sc-bat-ep5");
+    const ep11 = document.getElementById("sc-bat-ep11");
+    if (!ep5 || !ep11) return;
+
+    ep5.addEventListener("change", () => {
+      if (ep5.checked) ep11.checked = false;
+      scActualizarEstiloExtras();
+    });
+
+    ep11.addEventListener("change", () => {
+      if (ep11.checked) ep5.checked = false;
+      scActualizarEstiloExtras();
+    });
+  }
+
+  function scActualizarEstiloExtras() {
+    document.querySelectorAll("#sc-step-3 .sc-extra-card").forEach((card) => {
+      const input = card.querySelector("input");
+      if (!input) return;
+      card.classList.toggle("sc-extra-selected", input.checked);
+    });
+    scUpdateNextBtnText();
+  }
+
+  function scConfigurarEstiloExtras() {
+    document.querySelectorAll("#sc-step-3 input").forEach((inp) => {
+      inp.addEventListener("change", scActualizarEstiloExtras);
+    });
+    scActualizarEstiloExtras();
+  }
+
+  // ==========================
+  // Lead AJAX
+  // ==========================
+  async function scEnviarLead(payload) {
+    const url = (window.SC_LEAD && window.SC_LEAD.ajaxurl) ? window.SC_LEAD.ajaxurl : "/wp-admin/admin-ajax.php";
+    const nonce = (window.SC_LEAD && window.SC_LEAD.nonce) ? window.SC_LEAD.nonce : "";
+
+    const form = new URLSearchParams();
+    form.append("action", "sc_lead");
+    if (nonce) form.append("_ajax_nonce", nonce);
+    form.append("website", ""); // honeypot
+
+    Object.entries(payload || {}).forEach(([k, v]) => {
+      if (v === undefined || v === null) return;
+      form.append(k, v);
+    });
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+      body: form.toString()
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok || !data || data.success === false) {
+      console.error("scEnviarLead error", { status: res.status, data });
+      throw new Error("lead_failed");
+    }
+    return data;
+  }
+
+  // ==========================
+  // Cálculo SOLAR
+  // ==========================
+  function calcularPresupuestoSolar() {
+    const m2Tejado = parseFloat((document.getElementById("sc-m2")?.value || "").replace(",", "."));
+    const gastoMensual = parseFloat((document.getElementById("sc-gasto")?.value || "").replace(",", "."));
+
+    const banco = document.getElementById("sc-banco")?.value || "ninguno";
+    const bancoLabel = SC_BANK_LABELS[banco] || banco;
+
+    let anosFinanciacion = null;
+    if (banco !== "ninguno") anosFinanciacion = parseInt(document.getElementById("sc-anos")?.value || "0", 10);
+
+    const incluyeBatEP5 = !!document.getElementById("sc-bat-ep5")?.checked;
+    const incluyeBatEP11 = !!document.getElementById("sc-bat-ep11")?.checked;
+    const incluyeAero300 = !!document.getElementById("sc-aero-300")?.checked;
+
+    const resultadoDiv = document.getElementById("sc-resultado");
+    const loadingDiv = document.getElementById("sc-loading");
+
+    const consumoMensualKwh = gastoMensual / SC_CONFIG.precioKwh;
+    const consumoAnualKwh = consumoMensualKwh * 12;
+
+    const kwpNecesariosBase = consumoAnualKwh / SC_CONFIG.kwhPorKwpAlAno;
+    const panelesNecesariosBase = kwpNecesariosBase / SC_CONFIG.kwpPorPanel;
+
+    const panelesObjetivo = Math.max(1, Math.ceil(panelesNecesariosBase) + 2);
+    const kwpObjetivo = panelesObjetivo * SC_CONFIG.kwpPorPanel;
+
+    const panelesMaximos = Math.floor(m2Tejado / SC_CONFIG.m2PorPanel);
+
+    let packElegido = null;
+    for (const pack of SC_CONFIG.packs) {
+      const cabePackEnTejado = pack.paneles <= panelesMaximos;
+      if (cabePackEnTejado && pack.potenciaKwp >= kwpObjetivo && pack.paneles >= panelesObjetivo) {
+        packElegido = pack;
+        break;
+      }
+    }
+
+    if (!packElegido) {
+      const packsQueCaben = SC_CONFIG.packs.filter((p) => p.paneles <= panelesMaximos);
+      packElegido = packsQueCaben.length ? packsQueCaben[packsQueCaben.length - 1] : SC_CONFIG.packs[0];
+    }
+
+    const cabeEnTejado = packElegido.paneles <= panelesMaximos;
+    const inversorRecomendado = packElegido.inversor || "Se definirá en el estudio personalizado";
+
+    const produccionAnual = packElegido.potenciaKwp * SC_CONFIG.kwhPorKwpAlAno;
+
+    let coverageRatio = produccionAnual / consumoAnualKwh;
+    if (!isFinite(coverageRatio) || coverageRatio <= 0) coverageRatio = 0.6;
+    else coverageRatio = Math.min(0.9, coverageRatio);
+
+    let detalleExtrasHTML = "";
+    let totalExtras = 0;
+
+    if (incluyeBatEP5) {
+      totalExtras += SC_CONFIG.baterias.ep5.precio;
+      detalleExtrasHTML += `<li>${SC_CONFIG.baterias.ep5.nombre}: ${formatearEuros(SC_CONFIG.baterias.ep5.precio)}</li>`;
+    }
+    if (incluyeBatEP11) {
+      totalExtras += SC_CONFIG.baterias.ep11.precio;
+      detalleExtrasHTML += `<li>${SC_CONFIG.baterias.ep11.nombre}: ${formatearEuros(SC_CONFIG.baterias.ep11.precio)}</li>`;
+    }
+    if (incluyeAero300) {
+      totalExtras += SC_CONFIG.aerotermia["300L"].precio;
+      detalleExtrasHTML += `<li>${SC_CONFIG.aerotermia["300L"].nombre}: ${formatearEuros(SC_CONFIG.aerotermia["300L"].precio)}</li>`;
+    }
+
+    let descuentoBateria = 0;
+    if (incluyeBatEP5 || incluyeBatEP11) {
+      if (banco === "bbva") descuentoBateria = SC_CONFIG.descuentosBateria.bbva;
+      else if (banco === "caixa") descuentoBateria = SC_CONFIG.descuentosBateria.caixa;
+    }
+
+    const subtotal = packElegido.precio + totalExtras;
+    const totalConDescuentos = subtotal - descuentoBateria;
+
+    let cuotaMensual = null;
+    if (anosFinanciacion) {
+      cuotaMensual = calcularCuotaMensual(
+        totalConDescuentos,
+        anosFinanciacion,
+        SC_CONFIG.financiacion.interesAnual,
+        SC_CONFIG.financiacion.margenSeguridad
+      );
+    }
+
+    try {
+      const nombre = (document.getElementById("sc-nombre")?.value || "").trim();
+      const telefono = (document.getElementById("sc-telefono")?.value || "").trim();
+      const email = (document.getElementById("sc-email")?.value || "").trim();
+
+      const extrasArr = [];
+      if (incluyeBatEP5) extrasArr.push("Batería FOX EP 5");
+      if (incluyeBatEP11) extrasArr.push("Batería FOX EP 11");
+      if (incluyeAero300) extrasArr.push("Aerotermia 300 L");
+
+      scEnviarLead({
+        nombre,
+        telefono,
+        email,
+        modo: "solar",
+        tejado: String(m2Tejado || ""),
+        gasto: String(gastoMensual || ""),
+        banco: String(banco || ""),
+        anos: String(anosFinanciacion || ""),
+        extras: extrasArr.join(", "),
+        total: String(totalConDescuentos || ""),
+        paneles: String(packElegido.paneles || ""),
+        potencia: String(packElegido.potenciaKwp || ""),
+        cuota: cuotaMensual ? String(Math.round(cuotaMensual)) : "",
+        page: window.location.href
+      }).catch(() => {});
+    } catch (e) {}
+
+    let warningTejado = "";
+    if (!cabeEnTejado) {
+      warningTejado = `<p class="sc-warning">Aviso: por superficie disponible, este pack podría no caber completo. Ajustaremos la propuesta en la visita técnica.</p>`;
+    }
+
+    const listaExtrasHTML = detalleExtrasHTML
+      ? `<ul class="sc-res-list">${detalleExtrasHTML}</ul>`
+      : "<p>No se han añadido extras.</p>";
+
+    const textoDescuento =
+      descuentoBateria > 0
+        ? `<p>Descuento por financiación (${bancoLabel}): –${formatearEuros(descuentoBateria)}</p>`
+        : "<p>Sin descuentos de financiación aplicados sobre la batería.</p>";
+
+    const textoFinanciacionHTML =
+      anosFinanciacion && cuotaMensual
+        ? `<p><strong>Financiación simulada:</strong> ${bancoLabel} · ${anosFinanciacion} años · cuota orientativa ${formatearEuros(cuotaMensual)}/mes.</p>`
+        : `<p><strong>Financiación:</strong> No se ha aplicado financiación en este cálculo.</p>`;
+
+    const chipsHTML = `
+      <div class="sc-res-highlight-chips">
+        <div class="sc-chip">
+          <span class="label">Placas recomendadas</span>
+          <span class="value">${packElegido.paneles} paneles</span>
+        </div>
+        <div class="sc-chip">
+          <span class="label">Potencia recomendada</span>
+          <span class="value">${kwpObjetivo.toFixed(2)} kWp</span>
+        </div>
+        <div class="sc-chip">
+          <span class="label">Cobertura estimada</span>
+          <span class="value">${Math.round(coverageRatio * 100)} %</span>
+        </div>
+      </div>
+    `;
+
+    const highlightHTML =
+      anosFinanciacion && cuotaMensual
+        ? `
+          <div class="sc-res-highlight">
+            <div>
+              <span class="sc-res-highlight-label" style="display:block; margin-bottom:6px;">
+                Cuota mensual aproximada (${bancoLabel} a ${anosFinanciacion} años)
+              </span>
+              <span class="sc-res-highlight-main" style="display:block; font-size:2.4rem; margin:8px 0 12px;">
+                ${formatearEuros(cuotaMensual)}/mes
+              </span>
+              <span class="sc-res-highlight-sub" style="display:block; line-height:1.5;">
+                Importe total orientativo: ${formatearEuros(totalConDescuentos)}.
+                <br><small>La cuota real puede variar según condiciones finales.</small>
+              </span>
+            </div>
+            ${chipsHTML}
+          </div>
+        `
+        : `
+          <div class="sc-res-highlight" style="text-align:center;">
+            <div>
+              <span class="sc-res-highlight-label" style="text-align:center;">Inversión orientativa de la instalación</span>
+              <span class="sc-res-highlight-main" style="display:block; font-size:2.8rem; margin:10px 0 14px;">
+                ${formatearEuros(totalConDescuentos)}
+              </span>
+              <span class="sc-res-highlight-sub" style="display:block; line-height:1.5;">
+                Presupuesto orientativo. Se ajustará tras un estudio técnico rápido.
+              </span>
+            </div>
+            ${chipsHTML}
+          </div>
+        `;
+
+    const resultadoHTML = `
+      <h3 class="sc-res-title">Tu presupuesto de paneles solares orientativo</h3>
+      <p class="sc-res-subtitle">Presupuesto orientativo. Lo ajustaremos tras un estudio técnico sin compromiso.</p>
+
+      ${highlightHTML}
+
+      <div class="sc-res-grid">
+        <div class="sc-res-block sc-res-next">
+          <h4 style="text-align:center; margin:0 0 10px 0;">Gracias.</h4>
+          <p class="sc-contact-subtitle">Si te encaja, te contactaremos para afinar la propuesta y resolver dudas.</p>
+
+          <div class="sc-next-steps" style="margin-top:16px;">
+            <h4 style="text-align:center; margin:0 0 10px 0;">
+              ¿Qué viene después de este presupuesto orientativo?
+            </h4>
+
+            <ul class="sc-steps-list">
+              <li>Revisaremos los datos proporcionados para poder realizar un <strong>estudio</strong> previo <strong>personalizado.</strong></li>
+              <li>Nos pondremos en contacto contigo.</li>
+              <li>Acordaremos una <strong>visita presencial (sin coste)</strong> con uno de nuestros asesores para que pueda realizarte un presupuesto completamente personalizado.</li>
+              <li>Te dejaremos valorar nuestra oferta.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sc-res-block sc-res-price">
+          <p class="sc-res-price-label" style="margin-bottom:8.5px;">Inversión orientativa</p>
+
+          <p class="sc-res-price-value" style="font-size:2.8rem; margin:4px 0 12px;">
+            ${formatearEuros(totalConDescuentos)}
+          </p>
+
+          <p class="sc-res-price-note" style="margin:0 0 10px;">
+            Incluye instalación fotovoltaica y extras seleccionados. Sujeto a visita técnica.
+          </p>
+
+          ${warningTejado}
+
+          <div class="sc-res-price-detail" style="margin-top:18px;">
+            <div style="margin-bottom:16px;">
+              <h4 style="margin:0 0 6px;">Extras seleccionados</h4>
+              ${listaExtrasHTML}
+            </div>
+
+            <div style="border-top:1px solid #ffe0c2; margin:4px 0 0; padding-top:12px;">
+              <h4 style="margin:0 0 6px;">Financiación y descuentos</h4>
+              ${textoFinanciacionHTML}
+              ${textoDescuento}
+            </div>
+
+            <div style="border-top:1px solid #ffe0c2; margin:12px 0 0; padding-top:12px;">
+              <h4 style="margin:0 0 6px;">Inversor previsto</h4>
+              <p style="margin:0;">${inversorRecomendado}</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-top: -100px;">
+          <button type="button" id="sc-nuevo-estudio-btn-mobile" class="sc-btn" onclick="realizarNuevoEstudio()">
+            Realizar un nuevo estudio
+          </button>
+        </div>
+      </div>
+    `;
+
+    scSetDisplay(loadingDiv, "none");
+    resultadoDiv.innerHTML = resultadoHTML;
+    scSetDisplay(resultadoDiv, "block");
+    document.getElementById("solar-calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ==========================
+  // Cálculo EXTRAS
+  // ==========================
+  function calcularPresupuestoExtras() {
+    const banco = document.getElementById("sc-banco")?.value || "ninguno";
+    const bancoLabel = SC_BANK_LABELS[banco] || banco;
+
+    let anosFinanciacion = null;
+    if (banco !== "ninguno") anosFinanciacion = parseInt(document.getElementById("sc-anos")?.value || "0", 10);
+
+    const incluyeBatEP5 = !!document.getElementById("sc-bat-ep5")?.checked;
+    const incluyeBatEP11 = !!document.getElementById("sc-bat-ep11")?.checked;
+    const incluyeAero300 = !!document.getElementById("sc-aero-300")?.checked;
+
+    const resultadoDiv = document.getElementById("sc-resultado");
+    const loadingDiv = document.getElementById("sc-loading");
+
+    let detalleExtrasHTML = "";
+    let totalExtras = 0;
+
+    if (incluyeBatEP5) {
+      totalExtras += SC_CONFIG.baterias.ep5.precio;
+      detalleExtrasHTML += `<li>${SC_CONFIG.baterias.ep5.nombre}: ${formatearEuros(SC_CONFIG.baterias.ep5.precio)}</li>`;
+    }
+    if (incluyeBatEP11) {
+      totalExtras += SC_CONFIG.baterias.ep11.precio;
+      detalleExtrasHTML += `<li>${SC_CONFIG.baterias.ep11.nombre}: ${formatearEuros(SC_CONFIG.baterias.ep11.precio)}</li>`;
+    }
+    if (incluyeAero300) {
+      totalExtras += SC_CONFIG.aerotermia["300L"].precio;
+      detalleExtrasHTML += `<li>${SC_CONFIG.aerotermia["300L"].nombre}: ${formatearEuros(SC_CONFIG.aerotermia["300L"].precio)}</li>`;
+    }
+
+    const listaExtrasHTML = detalleExtrasHTML
+      ? `<ul class="sc-res-list">${detalleExtrasHTML}</ul>`
+      : "<p>No se han seleccionado extras.</p>";
+
+    let descuentoBateria = 0;
+    if (incluyeBatEP5 || incluyeBatEP11) {
+      if (banco === "bbva") descuentoBateria = SC_CONFIG.descuentosBateria.bbva;
+      else if (banco === "caixa") descuentoBateria = SC_CONFIG.descuentosBateria.caixa;
+    }
+
+    const totalConDescuentos = Math.max(0, totalExtras - descuentoBateria);
+
+    let cuotaMensual = null;
+    if (anosFinanciacion) {
+      cuotaMensual = calcularCuotaMensual(
+        totalConDescuentos,
+        anosFinanciacion,
+        SC_CONFIG.financiacion.interesAnual,
+        SC_CONFIG.financiacion.margenSeguridad
+      );
+    }
+
+    try {
+      const nombre = (document.getElementById("sc-nombre")?.value || "").trim();
+      const telefono = (document.getElementById("sc-telefono")?.value || "").trim();
+      const email = (document.getElementById("sc-email")?.value || "").trim();
+
+      const extrasArr = [];
+      if (incluyeBatEP5) extrasArr.push("Batería FOX EP 5");
+      if (incluyeBatEP11) extrasArr.push("Batería FOX EP 11");
+      if (incluyeAero300) extrasArr.push("Aerotermia 300 L");
+
+      scEnviarLead({
+        nombre,
+        telefono,
+        email,
+        modo: "extras",
+        banco: String(banco || ""),
+        anos: String(anosFinanciacion || ""),
+        extras: extrasArr.join(", "),
+        total: String(totalConDescuentos || ""),
+        cuota: cuotaMensual ? String(Math.round(cuotaMensual)) : "",
+        page: window.location.href
+      }).catch(() => {});
+    } catch (e) {}
+
+    const textoFinanciacionHTML =
+      anosFinanciacion && cuotaMensual
+        ? `<p><strong>Financiación simulada:</strong> ${bancoLabel} · ${anosFinanciacion} años · cuota orientativa ${formatearEuros(cuotaMensual)}/mes.</p>`
+        : `<p><strong>Financiación:</strong> No se ha aplicado financiación en este cálculo.</p>`;
+
+    const textoDescuento =
+      descuentoBateria > 0
+        ? `<p>Descuento por financiación (${bancoLabel}) sobre batería: –${formatearEuros(descuentoBateria)}</p>`
+        : `<p>Sin descuentos de financiación aplicados sobre la batería.</p>`;
+
+    const chipsHTML = `
+      <div class="sc-res-highlight-chips">
+        <div class="sc-chip">
+          <span class="label">Batería</span>
+          <span class="value">${incluyeBatEP11 ? "FOX EP 11" : incluyeBatEP5 ? "FOX EP 5" : "No"}</span>
+        </div>
+        <div class="sc-chip">
+          <span class="label">Aerotermia</span>
+          <span class="value">${incluyeAero300 ? "300 L" : "No"}</span>
+        </div>
+        <div class="sc-chip">
+          <span class="label">Total orientativo</span>
+          <span class="value">${formatearEuros(totalConDescuentos)}</span>
+        </div>
+      </div>
+    `;
+
+    const highlightHTML =
+      anosFinanciacion && cuotaMensual
+        ? `
+          <div class="sc-res-highlight">
+            <div>
+              <span class="sc-res-highlight-label" style="display:block; margin-bottom:6px;">
+                Cuota mensual aproximada (baterías/aerotermia)
+              </span>
+
+              <span class="sc-res-highlight-main" style="display:block; font-size:2.4rem; margin:8px 0 12px;">
+                ${formatearEuros(cuotaMensual)} /mes
+              </span>
+
+              <span class="sc-res-highlight-sub" style="display:block; line-height:1.5;">
+                Importe total orientativo: ${formatearEuros(totalConDescuentos)}.<br>
+                <small>Se ajustará tras revisión de compatibilidad.</small>
+              </span>
+            </div>
+
+            ${chipsHTML}
+          </div>
+        `
+        : `
+          <div class="sc-res-highlight" style="text-align:center;">
+            <div>
+              <span class="sc-res-highlight-label" style="display:block; margin-bottom:6px;">
+                Inversión orientativa de baterías/aerotermia
+              </span>
+
+              <span class="sc-res-highlight-main" style="display:block; font-size:2.8rem; margin:10px 0 14px;">
+                ${formatearEuros(totalConDescuentos)}
+              </span>
+
+              <span class="sc-res-highlight-sub" style="display:block; line-height:1.5;">
+                Presupuesto orientativo. Lo ajustaremos tras revisión técnica y compatibilidad.
+              </span>
+            </div>
+
+            ${chipsHTML}
+          </div>
+        `;
+
+    const resultadoHTML = `
+      <h3 class="sc-res-title">Tu presupuesto de baterías solares orientativo</h3>
+      <p class="sc-res-subtitle">
+        Presupuesto orientativo. Lo ajustaremos tras revisión técnica y compatibilidad.
+      </p>
+
+      ${highlightHTML}
+
+      <div class="sc-res-grid">
+        <div class="sc-res-block sc-res-next">
+          <h4 style="text-align:center; margin:0 0 10px;">Gracias.</h4>
+          <p class="sc-contact-subtitle">
+            Te contactaremos para revisar compatibilidad y cerrar el presupuesto.
+          </p>
+
+          <div class="sc-next-steps" style="margin-top:16px;">
+            <h4 style="text-align:center; margin:0 0 10px;">
+              ¿Cuál es el siguiente paso tras este presupuesto orientativo?
+            </h4>
+
+            <ul class="sc-steps-list" style="margin-top:16px;">
+              <li>Revisaremos los datos proporcionados para realizar un <strong>estudio previo personalizado</strong>.</li>
+              <li>Nos pondremos en contacto contigo para valorar la <strong>compatibilidad</strong> con tu instalación.</li>
+              <li>Acordaremos una <strong>visita presencial (sin coste)</strong> con un asesor energético.</li>
+              <li>Te realizaremos un <strong>presupuesto completamente personalizado</strong>.</li>
+              <li>Te dejaremos valorar nuestra oferta con total tranquilidad.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sc-res-block sc-res-price">
+          <p class="sc-res-price-label" style="margin-bottom:8px;">
+            Inversión orientativa
+          </p>
+
+          <p class="sc-res-price-value" style="font-size:2.8rem; margin:4px 0 12px;">
+            ${formatearEuros(totalConDescuentos)}
+          </p>
+
+          <div class="sc-res-price-detail" style="margin-top:18px;">
+            <div style="margin-bottom:16px;">
+              <h4 style="margin:0 0 6px;">Extras seleccionados</h4>
+              ${listaExtrasHTML}
+            </div>
+
+            <div style="border-top:1px solid #ffe0c2; padding-top:12px;">
+              <h4 style="margin:0 0 6px;">Financiación y descuentos</h4>
+              ${textoFinanciacionHTML}
+              ${textoDescuento}
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          id="sc-nuevo-estudio-btn"
+          class="sc-btn"
+          onclick="realizarNuevoEstudio()"
+          style="display:block; margin: 0 auto;">
+          Realizar un nuevo estudio
+        </button>
+      </div>
+    `;
+
+    scSetDisplay(loadingDiv, "none");
+    resultadoDiv.innerHTML = resultadoHTML;
+    scSetDisplay(resultadoDiv, "block");
+    document.getElementById("solar-calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ==========================
+  // Next button label logic
+  // ==========================
+  function scGetNextBtn() {
+    return (
+      document.getElementById("sc-next-btn") ||
+      document.querySelector("#solar-calculator .sc-nav-buttons .sc-btn:not(.sc-btn-secondary)")
+    );
+  }
+
+  function scUpdateNextBtnText() {
+    const nextBtn = scGetNextBtn();
+    if (!nextBtn) return;
+
+    const real = scPasoReal(scPasoActual);
+    if (real === 4) {
+      nextBtn.disabled = false;
+      const privacy = document.getElementById("sc-privacy-check");
+      const perr = document.getElementById("sc-privacy-error");
+      if (privacy && privacy.checked && perr) perr.style.display = "none";
+      return;
+    }
+
+    if (real !== 3) {
+      nextBtn.disabled = false;
+      if (nextBtn.dataset.baseText) delete nextBtn.dataset.baseText;
+      return;
+    }
+
+    if (!nextBtn.dataset.baseText) {
+      nextBtn.dataset.baseText = (nextBtn.textContent || "").trim() || "Siguiente";
+    }
+
+    const ep5 = !!document.getElementById("sc-bat-ep5")?.checked;
+    const ep11 = !!document.getElementById("sc-bat-ep11")?.checked;
+    const aero = !!document.getElementById("sc-aero-300")?.checked;
+
+    const anyChecked = ep5 || ep11 || aero;
+
+    if (scModo === "extras") {
+      nextBtn.disabled = !anyChecked;
+      nextBtn.textContent = anyChecked
+        ? nextBtn.dataset.baseText
+        : "Selecciona batería o aerotermia para continuar";
+      return;
+    }
+
+    nextBtn.disabled = false;
+    nextBtn.textContent = anyChecked ? nextBtn.dataset.baseText : "No quiero nada más";
+  }
+
+  // ==========================
+  // LISTENERS GLOBALES
+  // ==========================
+  if (!window.__SC_DOC_CHANGE_BOUND__) {
+    window.__SC_DOC_CHANGE_BOUND__ = true;
+
+    document.addEventListener("change", (e) => {
+      const id = e?.target?.id;
+
+      if (id === "sc-bat-ep5" || id === "sc-bat-ep11" || id === "sc-aero-300") {
+        scUpdateNextBtnText();
+      }
+
+      if (id === "sc-banco") {
+        actualizarVisibilidadFinanciacion();
+      }
+
+      if (id === "sc-privacy-check") {
+        const perr = document.getElementById("sc-privacy-error");
+        if (e.target.checked && perr) perr.style.display = "none";
+        scSetDisplay(document.getElementById("sc-error"), "none");
+      }
+    });
+  }
+
+  // ==========================
+  // Next step (con lock)
+  // ==========================
+  function scSiguientePaso(e) {
+    if (e && e.preventDefault) { e.preventDefault(); e.stopPropagation(); }
+    if (!scLockNav()) return false;
+
+    const real = scPasoReal(scPasoActual);
+
+    // ampliación
+    if (scModo === "ampliacion") {
+      const privacy = document.getElementById("sc-privacy-check");
+      if (privacy && !privacy.checked) {
+        const perr = document.getElementById("sc-privacy-error");
+        if (perr) perr.style.display = "block";
+        scMostrarError("Tienes que aceptar la política de privacidad para ver tu presupuesto.");
+        privacy.scrollIntoView({ behavior: "smooth", block: "center" });
+        return false;
+      }
+
+      const telefono = (document.getElementById("sc-telefono")?.value || "").trim();
+      const email = (document.getElementById("sc-email")?.value || "").trim();
+
+      if (!telefono || !email) return scMostrarError("Necesitamos tu teléfono y tu email para continuar.");
+      if (!scValidarTelefonoES(telefono)) return scMostrarError("Introduce un teléfono válido (España). Ejemplo: 612345678.");
+      if (!scValidarEmail(email)) return scMostrarError("Introduce un email válido. Ejemplo: nombre@dominio.com");
+
+      try {
+        const nombre = (document.getElementById("sc-nombre")?.value || "").trim();
+        scEnviarLead({
+          nombre, telefono, email,
+          modo: "ampliacion",
+          extras: "",
+          total: "",
+          page: window.location.href
+        }).catch(() => {});
+      } catch (e2) {}
+
+      const loadingDiv = document.getElementById("sc-loading");
+      const resultadoDiv = document.getElementById("sc-resultado");
+
+      scOcultarFormulario();
+      scSetDisplay(resultadoDiv, "none");
+      scSetDisplay(loadingDiv, "block");
+
+      setTimeout(() => {
+        scSetDisplay(loadingDiv, "none");
+        resultadoDiv.innerHTML = `
+          <h3 class="sc-res-title">¡Listo!</h3>
+          <p class="sc-res-subtitle">Hemos recibido tu solicitud de ampliación.</p>
+
+          <h4 style="margin:16px 0 10px 0; text-align:center;">¿Qué va a pasar ahora?</h4>
+          <ul class="sc-steps-list">
+            <li>Nos pondremos en contacto contigo para valorar la posibilidad de una ampliación, teniendo en cuenta los paneles que ya posee tu instalación y el espacio disponible.</li>
+            <li>Acordaremos una <strong>visita presencial (sin coste)</strong> con uno de nuestros asesores energéticos para que pueda revisar tu instalación y orientarte sobre la mejor forma de ampliarla.</li>
+            <li>Nuestro asesor energético te realizará un <strong>presupuesto personalizado</strong>.</li>
+            <li>Te podrás valorar nuestra oferta con total tranquilidad.</li>
+          </ul>
+
+          <button
+            type="button"
+            id="sc-nuevo-estudio-btn"
+            class="sc-btn"
+            onclick="realizarNuevoEstudio()"
+            style="display:block; margin: 30px auto 0;">
+            Realizar un nuevo estudio
+          </button>
+        `;
+        scSetDisplay(resultadoDiv, "block");
+        document.getElementById("solar-calculator")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 900);
+
+      return false;
+    }
+
+    // real 1 (tejado)
+    if (real === 1) {
+      const m2Tejado = parseFloat((document.getElementById("sc-m2")?.value || "").replace(",", "."));
+      if (isNaN(m2Tejado) || m2Tejado <= 0) return scMostrarError("Indica al menos los metros cuadrados de tejado disponibles.");
+      mostrarPaso(scPasoActual + 1);
+      return false;
+    }
+
+    // real 2 (consumo)
+    if (real === 2) {
+      const gastoMensual = parseFloat((document.getElementById("sc-gasto")?.value || "").replace(",", "."));
+      if (isNaN(gastoMensual) || gastoMensual <= 0) return scMostrarError("Indica tu gasto medio mensual de luz para continuar.");
+      mostrarPaso(scPasoActual + 1);
+      return false;
+    }
+
+    // real 3 (extras)
+    if (real === 3) {
+      if (scModo === "extras") {
+        const ep5 = !!document.getElementById("sc-bat-ep5")?.checked;
+        const ep11 = !!document.getElementById("sc-bat-ep11")?.checked;
+        const aero = !!document.getElementById("sc-aero-300")?.checked;
+
+        if (!(ep5 || ep11 || aero)) {
+          scMostrarError("Para continuar, selecciona batería o aerotermia.");
+          return false;
+        }
+      }
+
+      mostrarPaso(scPasoActual + 1);
+      return false;
+    }
+
+    // real 4 (datos + calcular)
+    if (real === 4) {
+      const privacy = document.getElementById("sc-privacy-check");
+      if (privacy && !privacy.checked) {
+        const perr = document.getElementById("sc-privacy-error");
+        if (perr) perr.style.display = "block";
+        scMostrarError("Tienes que aceptar la política de privacidad para ver tu presupuesto.");
+        privacy.scrollIntoView({ behavior: "smooth", block: "center" });
+        return false;
+      }
+
+      const telefono = (document.getElementById("sc-telefono")?.value || "").trim();
+      const email = (document.getElementById("sc-email")?.value || "").trim();
+
+      if (!telefono || !email) return scMostrarError("Necesitamos tu teléfono y tu email para continuar.");
+      if (!scValidarTelefonoES(telefono)) return scMostrarError("Introduce un teléfono válido (España). Ejemplo: 612345678.");
+      if (!scValidarEmail(email)) return scMostrarError("Introduce un email válido. Ejemplo: nombre@dominio.com");
+
+      scAsegurarResultadoDentroDelCubiculo();
+
+      const loadingDiv = document.getElementById("sc-loading");
+      const resultadoDiv = document.getElementById("sc-resultado");
+
+      scOcultarFormulario();
+      scSetDisplay(resultadoDiv, "none");
+      scSetDisplay(loadingDiv, "block");
+
+      setTimeout(() => {
+        if (scModo === "extras") calcularPresupuestoExtras();
+        else calcularPresupuestoSolar();
+      }, 900);
+
+      return false;
+    }
+
+    return false;
+  }
+
+  // ==========================
+  // INIT (anti doble init + bloquear submits)
+  // ==========================
+  function scInit() {
+    const root = document.getElementById("solar-calculator");
+    if (!root) return;
+
+    if (root.dataset.scInit === "1") return;
+    root.dataset.scInit = "1";
+    root.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      return false;
+    });
+
+    scAsegurarResultadoDentroDelCubiculo();
+    scSetDisplay(document.getElementById("sc-intro-screen"), "block");
+    scSetDisplay(document.getElementById("sc-steps-ui"), "none");
+
+    root.classList.remove("sc-mode-extras");
+
+    scConfigurarNav();
+    mostrarPaso(1);
+    scReubicarFinanciacion();
+    actualizarVisibilidadFinanciacion();
+
+    scConfigurarBateriasExclusivas();
+    scConfigurarEstiloExtras();
+    scUpdateNextBtnText();
+
+    // quitar error al escribir
+    const m2 = document.getElementById("sc-m2");
+    const gasto = document.getElementById("sc-gasto");
+    [m2, gasto].forEach((inp) => {
+      if (!inp) return;
+      inp.addEventListener("input", () => scSetDisplay(document.getElementById("sc-error"), "none"));
+    });
+
+    // Bind botones (si existen) sin duplicar
+    const nextBtn = document.getElementById("sc-next-btn");
+    if (nextBtn && !nextBtn.dataset.scBound) {
+      nextBtn.dataset.scBound = "1";
+      nextBtn.addEventListener("click", (ev) => scSiguientePaso(ev));
+    }
+
+    const prevBtn = document.getElementById("sc-prev-btn");
+    if (prevBtn && !prevBtn.dataset.scBound) {
+      prevBtn.dataset.scBound = "1";
+      prevBtn.addEventListener("click", (ev) => scPasoAnterior(ev));
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", scInit);
+  } else {
+    scInit();
+  }
+
+  // ==========================
+  // EXPORTS (para onclick del HTML)
+  // ==========================
+  window.scEmpezar = scEmpezar;
+  window.scEmpezarSoloExtras = scEmpezarSoloExtras;
+  window.scEmpezarAmpliacion = scEmpezarAmpliacion;
+  window.scSiguientePaso = scSiguientePaso;
+  window.scPasoAnterior = scPasoAnterior;
+  window.scVolverAIntro = scVolverAIntro;
+
+})();
+
+/**
+ *Reinicio correcto (sin llamar a mostrarPaso() que está dentro del closure)
+ */
+function realizarNuevoEstudio() {
+  const $ = (id) => document.getElementById(id);
+
+  if ($("sc-m2")) $("sc-m2").value = "";
+  if ($("sc-gasto")) $("sc-gasto").value = "";
+  if ($("sc-banco")) $("sc-banco").value = "ninguno";
+  if ($("sc-anos")) $("sc-anos").value = "10";
+  if ($("sc-nombre")) $("sc-nombre").value = "";
+  if ($("sc-telefono")) $("sc-telefono").value = "";
+  if ($("sc-email")) $("sc-email").value = "";
+
+  if ($("sc-bat-ep5")) $("sc-bat-ep5").checked = false;
+  if ($("sc-bat-ep11")) $("sc-bat-ep11").checked = false;
+  if ($("sc-aero-300")) $("sc-aero-300").checked = false;
+
+  if ($("sc-privacy-check")) $("sc-privacy-check").checked = false;
+  if ($("sc-privacy-error")) $("sc-privacy-error").style.display = "none";
+  if ($("sc-error")) $("sc-error").style.display = "none";
+
+  if (typeof window.scVolverAIntro === "function") {
+    window.scVolverAIntro();
+  } else {
+    const intro = $("sc-intro-screen");
+    const steps = $("sc-steps-ui");
+    const formWrapper = $("sc-form-wrapper");
+    const loadingDiv = $("sc-loading");
+    const resultadoDiv = $("sc-resultado");
+    if (loadingDiv) loadingDiv.style.display = "none";
+    if (resultadoDiv) resultadoDiv.style.display = "none";
+    if (steps) steps.style.display = "none";
+    if (formWrapper) formWrapper.style.display = "block";
+    if (intro) intro.style.display = "block";
+  }
+}
+</script>
+
+
+
+
+  </body>
+</html>
